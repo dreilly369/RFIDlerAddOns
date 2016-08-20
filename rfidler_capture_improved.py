@@ -1,13 +1,10 @@
 #!/usr/bin/env python2
 #encoding: UTF-8
-import sys
-import time
+from time import sleep
 import RFIDler
 from optparse import OptionParser
 from random import randint
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
+# This script is used to try and guess an unknown RFID tags UID. 
 
 def dict_output(input, delimiter=":"):
     out = {}
@@ -58,7 +55,7 @@ parser.add_option("-o", "--out-file", dest="outFile", default="quick_capture_%d.
                       help="The first id in the series to try")
 parser.add_option("-p", "--port", dest="commPort", default="/dev/ttyACM0",
                       help="The number of samples per chunk")
-parser.add_option("-m", "--multi-clone", dest="multiClone", default=False % randint(0,999999999999999),
+parser.add_option("-m", "--multi-clone", dest="multiClone", default=False,
                       help="The first id in the series to try")
 
                       
@@ -66,12 +63,11 @@ parser.add_option("-m", "--multi-clone", dest="multiClone", default=False % rand
 
 usage()
 
-'''
 on_pi = True
 try:
     import RPi.GPIO as GPIO
-except RuntimeError:
-    print("Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
+except ImportError:
+    print("Error importing RPi.GPIO! Skipping GPIO environment. If you are on a Pi make sure to run with sudo \n")
     on_pi = False
     
 if on_pi:
@@ -81,7 +77,6 @@ if on_pi:
     print "Pin number mode: %s" % mode
     GPIO.setup(working_led, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(capture_btn, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-'''
 
 port = options.commPort
 rfidler = RFIDler.RFIDler()
@@ -101,18 +96,19 @@ with open(options.outFile,'w') as f:
                 f.write("\n")
                 detected[dat_pieces[0].strip()] = dat_pieces[1].strip() 
     f.close()
-time.sleep(1)
+sleep(1)
 if options.multiClone:
     for k in detected.keys():
         v = detected[k]
         print "Would you like to try cloning a %s card with value %s" % (k,v)
         ans = raw_input("[y/n]? ")
         if ans.upper()[0] == "Y":
-            time.sleep(2)
+
+            sleep(2)
             rfidler.command('set tag %s' % k)
-            time.sleep(2)
+            sleep(2)
             rfidler.command('encode %s %s' % (k,v))
-            time.sleep(2)
+            sleep(2)
             result, data=rfidler.command('vtag')
             loaded = dict_output(data)
             print "VTAG Data Stored"
