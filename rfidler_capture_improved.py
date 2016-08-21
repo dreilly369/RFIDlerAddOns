@@ -56,7 +56,7 @@ parser.add_option("-o", "--out-file", dest="outFile", default="quick_capture_%d.
 parser.add_option("-p", "--port", dest="commPort", default="/dev/ttyACM0",
                       help="The number of samples per chunk")
 parser.add_option("-m", "--multi-clone", dest="multiClone", default=False,
-                      help="The first id in the series to try")
+                      help="Offers to clone each card type with an unempty value")
 
                       
 (options, args) = parser.parse_args()
