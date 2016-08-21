@@ -35,16 +35,13 @@ def usage():
 parser = OptionParser()
 parser.add_option("-c", "--card-type", dest="cardType", default ="askraw",
                   help="The type of card to emulate")
-parser.add_option("-r", "--replay-file", dest="replayFile", default=None,
-                      help="try making clones from a previous capture file")
+#parser.add_option("-r", "--replay-file", dest="replayFile", default=None,
+#                      help="try making clones from a previous capture file [WIP]")
 parser.add_option("-o", "--out-file", dest="outFile", default="quick_stream_%d.txt" % randint(0,999999999999999),
-                      help="The first id in the series to try")
+                      help="The file to save results to")
 parser.add_option("-p", "--port", dest="commPort", default="/dev/ttyACM0",
-                      help="The number of samples per chunk")
-parser.add_option("-m", "--multi-clone", dest="multiClone", default=False ,
-                      help="The first id in the series to try")
+                      help="The communication port. Default is /dev/ttyACM0")
 
-                      
 (options, args) = parser.parse_args()
 
 port = options.commPort
