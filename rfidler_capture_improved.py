@@ -6,7 +6,6 @@ from optparse import OptionParser
 from random import randint
 
 # This script is used to try and guess an unknown RFID tag's UID. 
-
 def dict_output(input, delimiter=":"):
     out = {}
     for c in input:
@@ -58,7 +57,8 @@ parser.add_option("-p", "--port", dest="commPort", default="/dev/ttyACM0",
                       help="The number of samples per chunk")
 parser.add_option("-m", "--multi-clone", dest="multiClone", default=False,
                       help="Offers to clone each card type with an unempty value. DO NOT USE WITH -b (--button-poll)")
-
+parser.add_option("-b", "--button-poll", dest="pollBtn", default=False,
+                      help="If running with a button connected to pin 7, set this to True")
                       
 (options, args) = parser.parse_args()
 
@@ -90,6 +90,9 @@ def main():
                     f.write(c)
                     f.write("\n")
                     detected[dat_pieces[0].strip()] = dat_pieces[1].strip() 
+        if on_pi:
+            f.write("------------------\n")
+            
         f.close()
     sleep(1)
     if options.multiClone:
@@ -116,8 +119,8 @@ def main():
             else:
                 print "Skipping %s, you can still try to clone this later from the file." % k
 
-if on_pi:
-    capture_btn = 24 # Bring to ground to start a capture stream
+if on_pi and options.pollBtn:
+    capture_btn = 4 # Bring to ground to start a capture stream
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(capture_btn, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     while True:
@@ -127,3 +130,4 @@ if on_pi:
             
 else: 
     main()
+
