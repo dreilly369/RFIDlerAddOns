@@ -77,7 +77,9 @@ result, reason = rfidler.connect(port)
 if not result:
     print 'Warning - could not open serial port:', reason
     exit()
-    
+
+rfidler.command('LEDON 5')
+
 def main():
     result, data=rfidler.command('autotag ')
     detected = {}
